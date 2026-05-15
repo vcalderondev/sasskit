@@ -96,8 +96,24 @@
 .w-100vw
   width: 100vw
 
+.w-100vw-m
+  @include mobile
+    width: 100vw !important
+
+.w-100vw-t
+  @include tablet
+    width: 100vw !important
+
 .h-100vh
   height: 100vh
+
+.h-100vh-m
+  @include mobile
+    height: 100vh !important
+
+.h-100vh-t
+  @include tablet
+    height: 100vh !important
 
 
 // -----------------------------------------------------------------------------
@@ -106,26 +122,49 @@
 // Generates .w-Xpx and .h-Xpx for values from 1 to 64.
 // Useful for fixed-size elements like headers, icons and buttons.
 
-@for $i from 1 through 64
+@mixin generate-fixed-size($i)
   .w-#{$i}px
     width: #{$i}px !important
+  .w-#{$i}px-m
+    @include mobile
+      width: #{$i}px !important
+  .w-#{$i}px-t
+    @include tablet
+      width: #{$i}px !important
+
   .h-#{$i}px
     height: #{$i}px !important
+  .h-#{$i}px-m
+    @include mobile
+      height: #{$i}px !important
+  .h-#{$i}px-t
+    @include tablet
+      height: #{$i}px !important
+
   .min-w-#{$i}px
     min-width: #{$i}px !important
+  .min-w-#{$i}px-m
+    @include mobile
+      min-width: #{$i}px !important
+  .min-w-#{$i}px-t
+    @include tablet
+      min-width: #{$i}px !important
+
   .min-h-#{$i}px
     min-height: #{$i}px !important
+  .min-h-#{$i}px-m
+    @include mobile
+      min-height: #{$i}px !important
+  .min-h-#{$i}px-t
+    @include tablet
+      min-height: #{$i}px !important
+
+@for $i from 1 through 64
+  @include generate-fixed-size($i)
 
 $common-sizes: (80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 450, 480, 500, 550, 600, 700, 800)
 @each $size in $common-sizes
-  .w-#{$size}px
-    width: #{$size}px !important
-  .h-#{$size}px
-    height: #{$size}px !important
-  .min-w-#{$size}px
-    min-width: #{$size}px !important
-  .min-h-#{$size}px
-    min-height: #{$size}px !important
+  @include generate-fixed-size($size)
 
 
 // -----------------------------------------------------------------------------
@@ -249,6 +288,14 @@ $common-sizes: (80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 
   .flex-#{$i}
     flex: $i
 
+  .flex-#{$i}-m
+    @include mobile
+      flex: $i !important
+
+  .flex-#{$i}-t
+    @include tablet
+      flex: $i !important
+
   .flex-grow-#{$i}
     flex-grow: $i
 
@@ -319,8 +366,24 @@ $common-sizes: (80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 
 .object-cover
   object-fit: cover
 
+.object-cover-m
+  @include mobile
+    object-fit: cover !important
+
+.object-cover-t
+  @include tablet
+    object-fit: cover !important
+
 .object-contain
   object-fit: contain
+
+.object-contain-m
+  @include mobile
+    object-fit: contain !important
+
+.object-contain-t
+  @include tablet
+    object-fit: contain !important
 
 
 // -----------------------------------------------------------------------------
@@ -334,5 +397,73 @@ $common-sizes: (80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 
   .z-#{$i}
     z-index: $i
 
+  .z-#{$i}-m
+    @include mobile
+      z-index: $i !important
+
+  .z-#{$i}-t
+    @include tablet
+      z-index: $i !important
+
   .z-#{$i * 10}
     z-index: $i * 10
+
+  .z-#{$i * 10}-m
+    @include mobile
+      z-index: $i * 10 !important
+
+  .z-#{$i * 10}-t
+    @include tablet
+      z-index: $i * 10 !important
+
+
+// -----------------------------------------------------------------------------
+// Overflow
+// -----------------------------------------------------------------------------
+
+@each $overflow in $overflows
+  .overflow-#{$overflow}
+    overflow: $overflow !important
+  .overflow-#{$overflow}-m
+    @include mobile
+      overflow: $overflow !important
+  .overflow-#{$overflow}-t
+    @include tablet
+      overflow: $overflow !important
+
+  .overflow-x-#{$overflow}
+    overflow-x: $overflow !important
+  .overflow-x-#{$overflow}-m
+    @include mobile
+      overflow-x: $overflow !important
+  .overflow-x-#{$overflow}-t
+    @include tablet
+      overflow-x: $overflow !important
+
+  .overflow-y-#{$overflow}
+    overflow-y: $overflow !important
+  .overflow-y-#{$overflow}-m
+    @include mobile
+      overflow-y: $overflow !important
+  .overflow-y-#{$overflow}-t
+    @include tablet
+      overflow-y: $overflow !important
+
+
+// -----------------------------------------------------------------------------
+// Opacity
+// -----------------------------------------------------------------------------
+// `$opacities` holds percentages from 0 to 100; the class divides by 100 to
+// emit the corresponding decimal value (e.g. `.opacity-50` -> `opacity: 0.5`).
+
+@each $opacity in $opacities
+  .opacity-#{$opacity}
+    opacity: $opacity * 0.01 !important
+
+  .opacity-#{$opacity}-m
+    @include mobile
+      opacity: $opacity * 0.01 !important
+
+  .opacity-#{$opacity}-t
+    @include tablet
+      opacity: $opacity * 0.01 !important

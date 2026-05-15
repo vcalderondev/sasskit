@@ -99,11 +99,35 @@ $weights: (100, 200, 300, 400, 500, 600, 700, 800, 900)
   .fw-#{$weight}
     font-weight: #{$weight} !important
 
+  .fw-#{$weight}-m
+    @include mobile
+      font-weight: #{$weight} !important
+
+  .fw-#{$weight}-t
+    @include tablet
+      font-weight: #{$weight} !important
+
 .fw-bold
   font-weight: bold !important
 
+.fw-bold-m
+  @include mobile
+    font-weight: bold !important
+
+.fw-bold-t
+  @include tablet
+    font-weight: bold !important
+
 .fw-normal
   font-weight: normal !important
+
+.fw-normal-m
+  @include mobile
+    font-weight: normal !important
+
+.fw-normal-t
+  @include tablet
+    font-weight: normal !important
 
 
 // -----------------------------------------------------------------------------
@@ -135,6 +159,14 @@ $transforms: (uppercase, lowercase, capitalize, none)
   .text-#{$trans}
     text-transform: $trans !important
 
+  .text-#{$trans}-m
+    @include mobile
+      text-transform: $trans !important
+
+  .text-#{$trans}-t
+    @include tablet
+      text-transform: $trans !important
+
 
 // -----------------------------------------------------------------------------
 // Line height
@@ -145,8 +177,24 @@ $transforms: (uppercase, lowercase, capitalize, none)
   .lh-#{$i}
     line-height: #{$i} !important
 
+  .lh-#{$i}-m
+    @include mobile
+      line-height: #{$i} !important
+
+  .lh-#{$i}-t
+    @include tablet
+      line-height: #{$i} !important
+
   .lh-#{$i}-5
     line-height: #{$i + 0.5} !important
+
+  .lh-#{$i}-5-m
+    @include mobile
+      line-height: #{$i + 0.5} !important
+
+  .lh-#{$i}-5-t
+    @include tablet
+      line-height: #{$i + 0.5} !important
 
 
 // -----------------------------------------------------------------------------
@@ -156,11 +204,35 @@ $transforms: (uppercase, lowercase, capitalize, none)
 .ws-nowrap
   white-space: nowrap !important
 
+.ws-nowrap-m
+  @include mobile
+    white-space: nowrap !important
+
+.ws-nowrap-t
+  @include tablet
+    white-space: nowrap !important
+
 .ws-normal
   white-space: normal !important
 
+.ws-normal-m
+  @include mobile
+    white-space: normal !important
+
+.ws-normal-t
+  @include tablet
+    white-space: normal !important
+
 .ws-pre
   white-space: pre !important
+
+.ws-pre-m
+  @include mobile
+    white-space: pre !important
+
+.ws-pre-t
+  @include tablet
+    white-space: pre !important
 
 
 // -----------------------------------------------------------------------------
@@ -172,3 +244,48 @@ $transforms: (uppercase, lowercase, capitalize, none)
   overflow: hidden
   text-overflow: ellipsis
   white-space: nowrap
+
+.text-ellipsis-m
+  @include mobile
+    overflow: hidden !important
+    text-overflow: ellipsis !important
+    white-space: nowrap !important
+
+.text-ellipsis-t
+  @include tablet
+    overflow: hidden !important
+    text-overflow: ellipsis !important
+    white-space: nowrap !important
+
+
+// -----------------------------------------------------------------------------
+// Letter spacing
+// -----------------------------------------------------------------------------
+
+@for $i from 1 through 10
+  .letter-spacing-#{$i}px
+    letter-spacing: #{$i}px !important
+
+  .letter-spacing-#{$i}px-m
+    @include mobile
+      letter-spacing: #{$i}px !important
+
+  .letter-spacing-#{$i}px-t
+    @include tablet
+      letter-spacing: #{$i}px !important
+
+// Named em-based letter-spacings.
+$letter-spacing-em-values: (0.01, 0.02, 0.05, 0.1)
+
+@each $val in $letter-spacing-em-values
+  $val-str: str-replace("#{$val}", ".", "-")
+  .letter-spacing-#{$val-str}-em
+    letter-spacing: #{$val}em !important
+
+  .letter-spacing-#{$val-str}-em-m
+    @include mobile
+      letter-spacing: #{$val}em !important
+
+  .letter-spacing-#{$val-str}-em-t
+    @include tablet
+      letter-spacing: #{$val}em !important
