@@ -1,8 +1,8 @@
 {
   "name": "@vcalderondev/sass-ruleset",
-  "version": "1.0.0",
-  "description": "Unified SASS ruleset for layout and positioning",
-  "main": "src/index.sass",
+  "version": "1.0.1",
+  "description": "Unified SASS utility library",
+  "main": "src/_index.sass",
   "files": [
     "src"
   ],
@@ -12,6 +12,9 @@
     "layout",
     "css"
   ],
-  "author": "vcalderondev",
-  "license": "ISC"
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Victor Calderon <mail@vcalderon.dev>",
+  "license": "MIT"
 }
