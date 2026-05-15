@@ -15,7 +15,6 @@
       display: $display !important
 
 // Width & Height
-$sizes: 0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100
 @each $size in $sizes
   .w-#{$size}
     width: #{$size}%
@@ -191,5 +190,5 @@ $sizes: 0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100
 @for $i from 1 through 10
   .z-#{$i}
     z-index: $i
-  .z-#{$i}0
-    z-index: #{$i}0
+  .z-#{$i * 10}
+    z-index: $i * 10
