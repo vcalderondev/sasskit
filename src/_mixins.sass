@@ -1,10 +1,39 @@
+// =============================================================================
+// MIXINS & UTILITY FUNCTIONS
+// -----------------------------------------------------------------------------
+// Responsive helpers and small string utilities used by the generators.
+//
+// Note: the modern `sass:string` module is used instead of the deprecated
+// global functions (`str-index`, `str-slice`, `str-length`). This keeps the
+// ruleset compatible with strict Dart Sass builds.
+// =============================================================================
+
+@use 'sass:string'
 @use 'variables' as *
 
+
+// -----------------------------------------------------------------------------
+// str-replace($string, $search, $replace)
+// -----------------------------------------------------------------------------
+// Replaces every occurrence of `$search` inside `$string` with `$replace`.
+// Implemented recursively because Sass does not ship a built-in replace
+// function. Used to turn `0.5` into `0-5` for class names like `.m-0-5-rem`.
+
 @function str-replace($string, $search, $replace: "")
-  $index: str-index($string, $search)
+  $string: "#{$string}"
+  $index: string.index($string, $search)
   @if $index
-    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace)
+    $before: string.slice($string, 1, $index - 1)
+    $after: string.slice($string, $index + string.length($search))
+    @return $before + $replace + str-replace($after, $search, $replace)
   @return $string
+
+
+// -----------------------------------------------------------------------------
+// Breakpoint mixins
+// -----------------------------------------------------------------------------
+// Each mixin opens a `max-width` media query. They are used by every
+// responsive utility (`-m`, `-t` suffixes) generated in this library.
 
 @mixin mobile
   @media (max-width: #{$mobile})
@@ -18,7 +47,17 @@
   @media (max-width: #{$desktop})
     @content
 
-// Generic media mixin
+
+// -----------------------------------------------------------------------------
+// media($point)
+// -----------------------------------------------------------------------------
+// Generic wrapper that delegates to the right breakpoint mixin based on the
+// `$point` argument. Helpful when the breakpoint name is dynamic.
+//
+// Example:
+//   +media(mobile)
+//     color: red
+
 @mixin media($point)
   @if $point == mobile
     @include mobile

@@ -1,65 +1,131 @@
+// =============================================================================
+// DISPLAY, LAYOUT & FLEX UTILITIES
+// -----------------------------------------------------------------------------
+// Generates the bulk of the layout-related classes:
+//   - Display modes (.d-flex, .d-grid, ...)
+//   - Width / Height percentages (.w-50, .h-100, ...)
+//   - Position helpers (.position-relative, .position-absolute, ...)
+//   - Flexbox alignment, justification, wrap and direction utilities
+//   - Z-index scale
+//
+// Every utility is generated in three variants:
+//   1. Base:     `.d-flex`
+//   2. Mobile:   `.d-flex-m`  (active when viewport <= $mobile)
+//   3. Tablet:   `.d-flex-t`  (active when viewport <= $tablet)
+// =============================================================================
+
+@use 'sass:map'
 @use 'variables' as *
 @use 'mixins' as *
 
+
+// -----------------------------------------------------------------------------
 // Display
+// -----------------------------------------------------------------------------
+// Produces `.d-{value}`, `.d-{value}-i` (forced with !important),
+// `.d-{value}-m` and `.d-{value}-t` for every entry in `$displays`.
+
 @each $display in $displays
   .d-#{$display}
     display: $display
+
   .d-#{$display}-i
     display: $display !important
+
   .d-#{$display}-m
     @include mobile
       display: $display !important
+
   .d-#{$display}-t
     @include tablet
       display: $display !important
 
-// Width & Height
+
+// -----------------------------------------------------------------------------
+// Width & Height (percentage scale)
+// -----------------------------------------------------------------------------
+// Iterates the `$sizes` list (0, 5, 10, ..., 100) and creates the matching
+// `.w-*` / `.h-*` classes plus their `-m` and `-t` responsive variants.
+
 @each $size in $sizes
+  // Note: we build the percentage value with `$size * 1%` instead of the
+  // string-interpolated form `#{$size}%`. The interpolated form clashes with
+  // Sass' modulo operator (`%`) in indented syntax and breaks parsing on
+  // strict Dart Sass builds.
+
+  // Width
   .w-#{$size}
-    width: #{$size}%
+    width: $size * 1%
+
   .w-#{$size}-m
     @include mobile
-      width: #{$size}% !important
+      width: $size * 1% !important
+
   .w-#{$size}-t
     @include tablet
-      width: #{$size}% !important
-  
+      width: $size * 1% !important
+
+  // Height
   .h-#{$size}
-    height: #{$size}%
+    height: $size * 1%
+
   .h-#{$size}-m
     @include mobile
-      height: #{$size}% !important
+      height: $size * 1% !important
+
   .h-#{$size}-t
     @include tablet
-      height: #{$size}% !important
+      height: $size * 1% !important
+
+
+// -----------------------------------------------------------------------------
+// Content-driven and viewport-relative sizes
+// -----------------------------------------------------------------------------
 
 .w-max-content
   width: max-content
+
 .w-max-content-m
   @include mobile
     width: max-content !important
+
 .w-max-content-t
   @include tablet
     width: max-content !important
 
 .w-100vw
   width: 100vw
+
 .h-100vh
   height: 100vh
 
+
+// -----------------------------------------------------------------------------
 // Positioning
+// -----------------------------------------------------------------------------
+// `.position-relative`, `.position-absolute`, `.position-fixed`,
+// `.position-sticky` together with their responsive variants.
+
 @each $pos in $positions
   .position-#{$pos}
     position: $pos
+
   .position-#{$pos}-m
     @include mobile
       position: $pos
+
   .position-#{$pos}-t
     @include tablet
       position: $pos
 
-// Flexbox Alignment
+
+// -----------------------------------------------------------------------------
+// Flexbox alignment (align-items / align-self / align-content)
+// -----------------------------------------------------------------------------
+// `flex-start` and `flex-end` are aliased to `start` / `end` in the class name
+// so consumers can write `.align-items-start` instead of
+// `.align-items-flex-start`.
+
 @each $align in $alignments
   $suffix: $align
   @if $align == 'flex-start'
@@ -69,32 +135,43 @@
 
   .align-items-#{$suffix}
     align-items: #{$align}
+
   .align-items-#{$suffix}-m
     @include mobile
       align-items: #{$align} !important
+
   .align-items-#{$suffix}-t
     @include tablet
       align-items: #{$align} !important
 
   .align-self-#{$suffix}
     align-self: #{$align}
+
   .align-self-#{$suffix}-m
     @include mobile
       align-self: #{$align} !important
+
   .align-self-#{$suffix}-t
     @include tablet
       align-self: #{$align} !important
 
   .align-content-#{$suffix}
     align-content: #{$align}
+
   .align-content-#{$suffix}-m
     @include mobile
       align-content: #{$align} !important
+
   .align-content-#{$suffix}-t
     @include tablet
       align-content: #{$align} !important
 
-// Justification
+
+// -----------------------------------------------------------------------------
+// Justification (justify-content / justify-items / justify-self)
+// -----------------------------------------------------------------------------
+// Same `flex-start` / `flex-end` aliasing rule as the alignment block above.
+
 @each $just in $justifications
   $suffix: $just
   @if $just == 'flex-start'
@@ -104,68 +181,92 @@
 
   .justify-content-#{$suffix}
     justify-content: #{$just}
+
   .justify-content-#{$suffix}-m
     @include mobile
       justify-content: #{$just} !important
+
   .justify-content-#{$suffix}-t
     @include tablet
       justify-content: #{$just} !important
 
   .justify-items-#{$suffix}
     justify-items: #{$just}
+
   .justify-items-#{$suffix}-m
     @include mobile
       justify-items: #{$just} !important
+
   .justify-items-#{$suffix}-t
     @include tablet
       justify-items: #{$just} !important
 
   .justify-self-#{$suffix}
     justify-self: #{$just}
+
   .justify-self-#{$suffix}-m
     @include mobile
       justify-self: #{$just} !important
+
   .justify-self-#{$suffix}-t
     @include tablet
       justify-self: #{$just} !important
 
-// Flex utilities
+
+// -----------------------------------------------------------------------------
+// Flex helpers: flex / flex-grow / flex-shrink / flex-none
+// -----------------------------------------------------------------------------
+
 @for $i from 0 through 1
   .flex-#{$i}
     flex: $i
+
   .flex-grow-#{$i}
     flex-grow: $i
+
   .flex-grow-#{$i}-m
     @include mobile
       flex-grow: $i !important
+
   .flex-grow-#{$i}-t
     @include tablet
       flex-grow: $i !important
-  
+
   .flex-shrink-#{$i}
     flex-shrink: $i
+
   .flex-shrink-#{$i}-m
     @include mobile
       flex-shrink: $i !important
+
   .flex-shrink-#{$i}-t
     @include tablet
       flex-shrink: $i !important
 
 .flex-none
   flex: none
+
 .flex-none-m
   @include mobile
     flex: none !important
+
 .flex-none-t
   @include tablet
     flex: none !important
 
+
+// -----------------------------------------------------------------------------
+// Flex wrap and flex direction
+// -----------------------------------------------------------------------------
+
 @each $wrap in $flex-wraps
   .flex-#{$wrap}
     flex-wrap: $wrap
+
   .flex-#{$wrap}-m
     @include mobile
       flex-wrap: $wrap !important
+
   .flex-#{$wrap}-t
     @include tablet
       flex-wrap: $wrap !important
@@ -173,22 +274,37 @@
 @each $dir in $flex-directions
   .flex-direction-#{$dir}
     flex-direction: #{$dir}
+
   .flex-direction-#{$dir}-m
     @include mobile
       flex-direction: #{$dir} !important
+
   .flex-direction-#{$dir}-t
     @include tablet
       flex-direction: #{$dir} !important
 
+
+// -----------------------------------------------------------------------------
 // Object fit
+// -----------------------------------------------------------------------------
+
 .object-cover
   object-fit: cover
+
 .object-contain
   object-fit: contain
 
-// Z-index
+
+// -----------------------------------------------------------------------------
+// Z-index scale
+// -----------------------------------------------------------------------------
+// Generates two scales in a single loop:
+//   - Single digits: .z-1, .z-2, ..., .z-10
+//   - Decades:       .z-10, .z-20, ..., .z-100
+
 @for $i from 1 through 10
   .z-#{$i}
     z-index: $i
+
   .z-#{$i * 10}
     z-index: $i * 10

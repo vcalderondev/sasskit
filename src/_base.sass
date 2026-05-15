@@ -1,25 +1,45 @@
+// =============================================================================
+// BASE / RESET
+// -----------------------------------------------------------------------------
+// Lightweight CSS reset applied globally. Loaded automatically through the
+// package entry (`_index.sass`).
+// =============================================================================
+
+
+// Universal border-box sizing so widths and paddings compose predictably.
 *, *::before, *::after
   box-sizing: border-box
 
+
+// Clear default margins / paddings from the document root and turn on
+// font smoothing on macOS browsers.
 html, body
   margin: 0
   padding: 0
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
 
+
+// Responsive media defaults.
 img, video
   max-width: 100%
   height: auto
 
+
+// Remove default list styling so lists can be styled per component.
 ul, ol
   list-style: none
   padding: 0
   margin: 0
 
+
+// Anchors inherit the surrounding color and drop the default underline.
 a
   text-decoration: none
   color: inherit
 
+
+// Reset native button chrome so buttons render as plain text by default.
 button
   background: none
   border: none
