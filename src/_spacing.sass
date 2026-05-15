@@ -21,6 +21,8 @@
 // =============================================================================
 
 @use 'sass:map'
+@use 'sass:list'
+@use 'sass:string'
 @use 'variables' as *
 @use 'mixins' as *
 
@@ -36,8 +38,23 @@ $px-values: (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1
 $em-values: (1, 1.5, 2)
 
 
+// -----------------------------------------------------------------------------
+// generate-spacing
+// -----------------------------------------------------------------------------
+// Emits every utility class for a single (property, value, unit) combination:
+//
+//   - Standard:       `.p-1-rem`, `.gap-10px`
+//   - Legacy alias:   `.p-1`,     `.gap-10`        (kept for backwards compat)
+//   - Side classes:   `.pt-1-rem`, `.pe-1-rem`, `.pb-1-rem`, `.ps-1-rem`
+//   - Axis classes:   `.px-1-rem`, `.py-1-rem`
+//   - Legacy side / axis aliases (without the unit suffix).
+//
+// `$type` is the full CSS property name (`padding`, `margin`, `gap`), and
+// `$prefix` is the first letter, which is used to build the class name.
+// `gap` does not emit side or axis variants because it has no per-side form.
+
 @mixin generate-spacing($type, $value, $unit)
-  $prefix: str-slice($type, 1, 1)
+  $prefix: string.slice($type, 1, 1)
   $val-str: str-replace("#{$value}", ".", "-")
   
   $unit-sep: "-"
@@ -62,7 +79,7 @@ $em-values: (1, 1.5, 2)
         #{$type}-#{$side}: #{$value}#{$unit} !important
 
     @each $axis, $a-prefix in (("left", "right"): "x", ("top", "bottom"): "y")
-      $sides: nth($axis, 1), nth($axis, 2)
+      $sides: list.nth($axis, 1), list.nth($axis, 2)
       .#{$prefix}#{$a-prefix}-#{$val-str}#{$unit-sep}#{$unit}
         @each $side in $sides
           #{$type}-#{$side}: #{$value}#{$unit} !important
@@ -72,7 +89,12 @@ $em-values: (1, 1.5, 2)
         @each $side in $sides
           #{$type}-#{$side}: #{$value}#{$unit} !important
 
+// -----------------------------------------------------------------------------
 // Generate utilities for all scales
+// -----------------------------------------------------------------------------
+// `gap` is only emitted in the `px` scale, matching the historic behaviour of
+// this library.
+
 @each $val in $rem-values
   @include generate-spacing("padding", $val, "rem")
   @include generate-spacing("margin", $val, "rem")
@@ -82,67 +104,9 @@ $em-values: (1, 1.5, 2)
   @include generate-spacing("margin", $val, "px")
   @include generate-spacing("gap", $val, "px")
 
-
-// -----------------------------------------------------------------------------
-// spacing-group
-// -----------------------------------------------------------------------------
-// Iterates a value scale and produces every spacing utility for the given
-// `$unit`:
-//   - gap-*           -> gap
-//   - m-* / p-*       -> margin / padding shorthand
-//   - m{t,b,l,r,s,e}- -> margin-{top, bottom, left, right, inline-start, inline-end}
-//   - p{t,b,l,r,s,e}- -> padding-{...}
-//   - mx- / my-       -> margin on x / y axis
-//   - px- / py-       -> padding on x / y axis
-
-@mixin spacing-group($unit, $values)
-  @each $val in $values
-    // gap-*
-    @include generate-spacing-item("gap", "gap", $val, $unit)
-
-    // margin / padding shorthand (m-*, p-*)
-    @include generate-spacing-item("margin", "m", $val, $unit)
-    @include generate-spacing-item("padding", "p", $val, $unit)
-
-    // Directional helpers (mt-*, mb-*, ml-*, mr-*, ms-*, me-*, p*-)
-    @each $name, $pref in $directions
-      @include generate-spacing-item("margin-#{$name}", "m#{$pref}", $val, $unit)
-      @include generate-spacing-item("padding-#{$name}", "p#{$pref}", $val, $unit)
-
-    // Axis helpers (mx-*, my-*, px-*, py-*)
-    //
-    // We build the class suffix manually because each axis class emits two
-    // physical properties (e.g. `mx-1-rem` -> margin-left + margin-right).
-    $val-str: str-replace("#{$val}", ".", "-")
-    $unit-sep: "-"
-    @if $unit == "px"
-      $unit-sep: ""
-    $suffix: "#{$val-str}#{$unit-sep}#{$unit}"
-    @if $val == 0
-      $suffix: "0"
-
-    // Map from short direction code -> logical CSS property fragment.
-    $dir-names: ("t": "top", "b": "bottom", "l": "left", "r": "right", "s": "inline-start", "e": "inline-end")
-
-    @each $ax, $dirs in $axis
-      .m#{$ax}-#{$suffix}
-        @each $dir in $dirs
-          $dir-name: map.get($dir-names, $dir)
-          margin-#{$dir-name}: #{$val}#{$unit} !important
-
-      .p#{$ax}-#{$suffix}
-        @each $dir in $dirs
-          $dir-name: map.get($dir-names, $dir)
-          padding-#{$dir-name}: #{$val}#{$unit} !important
-
-
-// -----------------------------------------------------------------------------
-// Generate the three scales
-// -----------------------------------------------------------------------------
-
-@include spacing-group("rem", $rem-values)
-@include spacing-group("px", $px-values)
-@include spacing-group("em", $em-values)
+@each $val in $em-values
+  @include generate-spacing("padding", $val, "em")
+  @include generate-spacing("margin", $val, "em")
 
 
 // -----------------------------------------------------------------------------
