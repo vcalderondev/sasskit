@@ -54,6 +54,28 @@ $fs-em-values: (1, 1.2, 1.5, 2)
     @include tablet
       font-size: #{$value}#{$unit} !important
 
+@mixin generate-typography-item($value)
+  $val-str: str-replace("#{$value}", ".", "-")
+  
+  // Standard class: .fs-1-rem
+  .fs-#{$val-str}-rem
+    font-size: #{$value}rem !important
+  
+  // Legacy alias: .fs-1 (for backward compatibility)
+  .fs-#{$val-str}
+    font-size: #{$value}rem !important
+
+  .fs-#{$val-str}-rem-m, .fs-#{$val-str}-m
+    @include mobile
+      font-size: #{$value}rem !important
+
+  .fs-#{$val-str}-rem-t, .fs-#{$val-str}-t
+    @include tablet
+      font-size: #{$value}rem !important
+
+@each $size in $fs-rem-values
+  @include generate-typography-item($size)
+
 
 // Generate the three font-size scales
 @each $val in $fs-px-values
