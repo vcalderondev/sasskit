@@ -1,6 +1,6 @@
 {
   "name": "@vcalderondev/sass-ruleset",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Unified SASS utility library",
   "main": "src/_index.sass",
   "sass": "src/_index.sass",
@@ -21,8 +21,5 @@
     "access": "public"
   },
   "author": "Victor Calderon <mail@vcalderon.dev>",
-  "license": "MIT",
-  "dependencies": {
-    "@vcalderondev/sass-ruleset": "^1.0.1"
-  }
+  "license": "MIT"
 }
