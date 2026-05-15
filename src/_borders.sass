@@ -1,0 +1,112 @@
+// =============================================================================
+// BORDER UTILITIES
+// -----------------------------------------------------------------------------
+// Border radius (numeric and named scale) plus border style helpers.
+//
+// Every class has its `-m` (mobile) and `-t` (tablet) responsive variant so
+// rounding and borders can be adjusted per breakpoint.
+// =============================================================================
+
+@use 'variables' as *
+@use 'mixins' as *
+
+
+// -----------------------------------------------------------------------------
+// Border Radius (px scale)
+// -----------------------------------------------------------------------------
+// Each value in `$border-radius-px` produces two equivalent classes:
+//   - `.border-radius-Npx`
+//   - `.rounded-Npx`  (shorter alias)
+
+@each $radius in $border-radius-px
+  .border-radius-#{$radius}px, .rounded-#{$radius}px
+    border-radius: #{$radius}px !important
+
+  .border-radius-#{$radius}px-m, .rounded-#{$radius}px-m
+    @include mobile
+      border-radius: #{$radius}px !important
+
+  .border-radius-#{$radius}px-t, .rounded-#{$radius}px-t
+    @include tablet
+      border-radius: #{$radius}px !important
+
+
+// -----------------------------------------------------------------------------
+// Border Radius (named / theme tokens)
+// -----------------------------------------------------------------------------
+// Named radii (`xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `full`) defined in
+// `$border-radius-named` in `_variables.sass`.
+
+@each $name, $value in $border-radius-named
+  .border-radius-#{$name}, .rounded-#{$name}
+    border-radius: $value !important
+
+  .border-radius-#{$name}-m, .rounded-#{$name}-m
+    @include mobile
+      border-radius: $value !important
+
+  .border-radius-#{$name}-t, .rounded-#{$name}-t
+    @include tablet
+      border-radius: $value !important
+
+
+// -----------------------------------------------------------------------------
+// Special case: 50% (circular elements)
+// -----------------------------------------------------------------------------
+
+.border-radius-50-percent, .rounded-50-percent
+  border-radius: 50% !important
+
+.border-radius-50-percent-m, .rounded-50-percent-m
+  @include mobile
+    border-radius: 50% !important
+
+.border-radius-50-percent-t, .rounded-50-percent-t
+  @include tablet
+    border-radius: 50% !important
+
+
+// -----------------------------------------------------------------------------
+// Border styles
+// -----------------------------------------------------------------------------
+
+.border-none
+  border: none !important
+
+.border-none-m
+  @include mobile
+    border: none !important
+
+.border-none-t
+  @include tablet
+    border: none !important
+
+.border-transparent
+  border-color: transparent !important
+
+.border-transparent-m
+  @include mobile
+    border-color: transparent !important
+
+.border-transparent-t
+  @include tablet
+    border-color: transparent !important
+
+
+// -----------------------------------------------------------------------------
+// Directional "remove border" helpers
+// -----------------------------------------------------------------------------
+// Generates `.border-{t,b,l,r,s,e}-none` so a single side's border can be
+// removed without affecting the others.
+
+@each $dir, $suffix in $directions
+  .border-#{$suffix}-none
+    border-#{$dir}: none !important
+
+  .border-#{$suffix}-none-m
+    @include mobile
+      border-#{$dir}: none !important
+
+  .border-#{$suffix}-none-t
+    @include tablet
+      border-#{$dir}: none !important
