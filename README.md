@@ -54,6 +54,12 @@ Responsive variants: `.d-flex-m`, `.d-none-t`, etc.
 
 Units: `rem`, `px`, `em`. `gap` only ships in the `px` scale.
 
+### Scales
+
+- **rem:** `0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4, 5`.
+- **px (1px granularity 0–25, then jumps):** `0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30, 32, 35, 40, 45, 48, 50, 60, 64, 80, 100`.
+- **em:** `1, 1.5, 2`.
+
 ### Naming convention
 
 ```
@@ -104,9 +110,9 @@ Prefer the explicit `-rem` / `-px` / `-em` variants in new code.
 .fs-{value}[-{unit}][-{breakpoint}]
 ```
 
-- px scale: `10, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64`
-- rem scale: `0.5 → 5` (24 values)
-- em scale: `1, 1.2, 1.5, 2`
+- **px scale:** `10, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64`.
+- **rem scale (25 values, fine-grained):** `0.5, 0.6, 0.65, 0.7, 0.75, 0.78, 0.8, 0.85, 0.875, 0.9, 0.95, 1, 1.1, 1.2, 1.25, 1.3, 1.4, 1.5, 1.75, 1.8, 2, 2.5, 3, 4, 5`.
+- **em scale:** `1, 1.2, 1.5, 2`.
 
 | Class            | Result                       |
 | ---------------- | ---------------------------- |
@@ -149,16 +155,24 @@ The rem scale also exposes legacy aliases without the unit suffix: `.fs-1`, `.fs
 
 `.w-{n}` and `.h-{n}` where `n` ∈ `0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100` — emit `width` / `height` in `%`. Both have `-m` / `-t` variants.
 
-### Content-driven / viewport
+### Content-driven
 
-`.w-max-content`, `.w-100vw`, `.h-100vh` (with `-m` / `-t`).
+`.w-max-content` (with `-m` / `-t`).
+
+### Viewport-relative scale (`vw` / `vh`)
+
+`.w-{n}vw` and `.h-{n}vh` where `n` ∈ `10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 95, 100`. Useful for hero sections, sticky drawers, full-bleed banners.
+
+For backwards compatibility `.w-100vw` and `.h-100vh` still ship as standalone aliases (identical to the scale entries).
+
+All viewport classes have `-m` / `-t` variants.
 
 ### Fixed pixel sizes
 
 `.w-{n}px`, `.h-{n}px`, `.min-w-{n}px`, `.min-h-{n}px` for:
 
 - Every integer from 1 to 64.
-- Common large sizes: 80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 450, 480, 500, 550, 600, 700, 800.
+- Common large sizes: 80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 450, 480, 500, 550, 600, 700, 750, 800.
 
 All have `-m` / `-t` variants.
 
@@ -168,14 +182,32 @@ All have `-m` / `-t` variants.
 
 `.top-0`, `.bottom-0`, `.left-0`, `.right-0` and centered helpers `.top-50-percent`, `.left-50-percent`.
 
-Pixel offsets:
+The 50% offsets pair naturally with the transform helpers below to achieve absolute centering.
 
-- Right: `.right-4px`, `.right-6px`, `.right-8px`, `.right-12px`.
-- Bottom: `.bottom-16px`, `.bottom-32px`, `.bottom-40px`.
+Pixel offsets (driven by `$right-px-values` and `$bottom-px-values`):
+
+- **Right:** `.right-4px`, `.right-6px`, `.right-8px`, `.right-12px`.
+- **Bottom:** `.bottom-16px`, `.bottom-32px`, `.bottom-40px`.
 
 ### Transforms
 
-`.translate-x-center` (`translateX(-50%)`), `.translate-y-center` (`translateY(-50%)`), `.translate-center` (`translate(-50%, -50%)`), `.transform-none`, `.rotate-90`.
+| Class                  | Effect                                |
+| ---------------------- | ------------------------------------- |
+| `.translate-x-center`  | `translateX(-50%)`                    |
+| `.translate-y-center`  | `translateY(-50%)`                    |
+| `.translate-center`    | `translate(-50%, -50%)` (XY centering)|
+| `.transform-none`      | Clears any existing `transform`       |
+| `.rotate-90`           | `rotate(90deg)`                       |
+
+Typical pattern for centered absolute elements:
+
+```html
+<div class="position-relative">
+  <div class="position-absolute top-50-percent left-50-percent translate-center">
+    Perfectly centered
+  </div>
+</div>
+```
 
 All layout utilities have `-m` / `-t` responsive variants.
 
@@ -214,7 +246,11 @@ All layout utilities have `-m` / `-t` responsive variants.
 
 ## Z-index
 
-`.z-1` ... `.z-10` and decades `.z-10` ... `.z-100`. With `-m` / `-t`.
+Three tiers, all with `-m` / `-t` variants:
+
+- **Units:** `.z-1` ... `.z-10`.
+- **Decades:** `.z-10`, `.z-20`, ..., `.z-100`.
+- **Extreme layers:** `.z-500`, `.z-1000`, `.z-2000`, `.z-5000`, `.z-9999` — for modals, toasts and overlay stacks that must beat anything below.
 
 ## Borders (`_borders.sass`)
 
@@ -253,6 +289,25 @@ All border classes have `-m` / `-t` variants.
 | `slideInRight`  | *(keyframe only)*       | Slide from the right                 |
 | `spin`          | `.animate-spin`         | Endless rotation                     |
 | `pulse`         | `.animate-pulse`        | Soft opacity + scale pulse           |
+
+## Tokens at a glance
+
+These are the lists that drive class generation — override them via `@use ... with` if you need different values.
+
+| Token                    | Where                | Default                                                                 |
+| ------------------------ | -------------------- | ----------------------------------------------------------------------- |
+| `$mobile`                | `_variables.sass`    | `576px`                                                                 |
+| `$tablet`                | `_variables.sass`    | `992px`                                                                 |
+| `$desktop`               | `_variables.sass`    | `1200px`                                                                |
+| `$sizes` (w / h %)       | `_variables.sass`    | `0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100`             |
+| `$opacities`             | `_variables.sass`    | `0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100`                 |
+| `$overflows`             | `_variables.sass`    | `auto, hidden, scroll, visible`                                         |
+| `$border-radius-px`      | `_variables.sass`    | `0, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40`                         |
+| `$border-radius-named`   | `_variables.sass`    | `xs: 2, sm: 4, md: 8, lg: 12, xl: 16, 2xl: 24, full: 9999`              |
+| `$viewport-sizes` (vw/vh)| `_display.sass`      | `10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 95, 100`                   |
+| `$extreme-z` (z-index)   | `_display.sass`      | `500, 1000, 2000, 5000, 9999`                                           |
+| `$right-px-values`       | `_layout.sass`       | `4, 6, 8, 12`                                                           |
+| `$bottom-px-values`      | `_layout.sass`       | `16, 32, 40`                                                            |
 
 ## Customising
 
