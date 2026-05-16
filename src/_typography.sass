@@ -241,9 +241,9 @@ $transforms: (uppercase, lowercase, capitalize, none)
 // Standard "single-line ellipsis" combination.
 
 .text-ellipsis
-  overflow: hidden
-  text-overflow: ellipsis
-  white-space: nowrap
+  overflow: hidden !important
+  text-overflow: ellipsis !important
+  white-space: nowrap !important
 
 .text-ellipsis-m
   @include mobile
@@ -261,8 +261,12 @@ $transforms: (uppercase, lowercase, capitalize, none)
 // -----------------------------------------------------------------------------
 // Letter spacing
 // -----------------------------------------------------------------------------
+// Positive and negative px-based letter-spacing helpers (1px ... 10px).
+// Negative variants are prefixed with `neg-` because Sass / CSS class names
+// can't start with a minus sign in selectors.
 
 @for $i from 1 through 10
+  // Positive
   .letter-spacing-#{$i}px
     letter-spacing: #{$i}px !important
 
@@ -274,11 +278,28 @@ $transforms: (uppercase, lowercase, capitalize, none)
     @include tablet
       letter-spacing: #{$i}px !important
 
-// Named em-based letter-spacings.
-$letter-spacing-em-values: (0.01, 0.02, 0.05, 0.1)
+  // Negative
+  .letter-spacing-neg-#{$i}px
+    letter-spacing: -#{$i}px !important
+
+  .letter-spacing-neg-#{$i}px-m
+    @include mobile
+      letter-spacing: -#{$i}px !important
+
+  .letter-spacing-neg-#{$i}px-t
+    @include tablet
+      letter-spacing: -#{$i}px !important
+
+
+// Named em-based letter-spacings (positive + negative).
+// The dot in `0.05` becomes `-` in the class name -> `.letter-spacing-0-05-em`.
+
+$letter-spacing-em-values: (0.01, 0.02, 0.05, 0.1, 0.15, 0.2)
 
 @each $val in $letter-spacing-em-values
   $val-str: str-replace("#{$val}", ".", "-")
+
+  // Positive
   .letter-spacing-#{$val-str}-em
     letter-spacing: #{$val}em !important
 
@@ -289,3 +310,15 @@ $letter-spacing-em-values: (0.01, 0.02, 0.05, 0.1)
   .letter-spacing-#{$val-str}-em-t
     @include tablet
       letter-spacing: #{$val}em !important
+
+  // Negative
+  .letter-spacing-neg-#{$val-str}-em
+    letter-spacing: -#{$val}em !important
+
+  .letter-spacing-neg-#{$val-str}-em-m
+    @include mobile
+      letter-spacing: -#{$val}em !important
+
+  .letter-spacing-neg-#{$val-str}-em-t
+    @include tablet
+      letter-spacing: -#{$val}em !important

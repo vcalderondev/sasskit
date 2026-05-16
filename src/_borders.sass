@@ -1,7 +1,9 @@
 // =============================================================================
 // BORDER UTILITIES
 // -----------------------------------------------------------------------------
-// Border radius (numeric and named scale) plus border style helpers.
+// Border radius (numeric and named scale), directional radii, applied
+// borders driven by the `--border` CSS custom property, and border style
+// helpers.
 //
 // Every class has its `-m` (mobile) and `-t` (tablet) responsive variant so
 // rounding and borders can be adjusted per breakpoint.
@@ -14,11 +16,18 @@
 // -----------------------------------------------------------------------------
 // Border Radius (px scale)
 // -----------------------------------------------------------------------------
-// Each value in `$border-radius-px` produces two equivalent classes:
-//   - `.border-radius-Npx`
-//   - `.rounded-Npx`  (shorter alias)
+// Each value in `$border-radius-px` produces:
+//
+//   - `.border-radius-Npx`, `.rounded-Npx`           full radius
+//   - `.border-radius-t-Npx`, `.rounded-t-Npx`       only top corners (TL + TR)
+//   - `.border-radius-b-Npx`, `.rounded-b-Npx`       only bottom corners (BL + BR)
+//   - `.border-radius-l-Npx`, `.rounded-l-Npx`       only left corners (TL + BL)
+//   - `.border-radius-r-Npx`, `.rounded-r-Npx`       only right corners (TR + BR)
+//
+// All variants also get `-m` and `-t` responsive forms.
 
 @each $radius in $border-radius-px
+  // Full radius
   .border-radius-#{$radius}px, .rounded-#{$radius}px
     border-radius: #{$radius}px !important
 
@@ -29,6 +38,66 @@
   .border-radius-#{$radius}px-t, .rounded-#{$radius}px-t
     @include tablet
       border-radius: #{$radius}px !important
+
+  // Top corners only
+  .border-radius-t-#{$radius}px, .rounded-t-#{$radius}px
+    border-top-left-radius: #{$radius}px !important
+    border-top-right-radius: #{$radius}px !important
+
+  .border-radius-t-#{$radius}px-m, .rounded-t-#{$radius}px-m
+    @include mobile
+      border-top-left-radius: #{$radius}px !important
+      border-top-right-radius: #{$radius}px !important
+
+  .border-radius-t-#{$radius}px-t, .rounded-t-#{$radius}px-t
+    @include tablet
+      border-top-left-radius: #{$radius}px !important
+      border-top-right-radius: #{$radius}px !important
+
+  // Bottom corners only
+  .border-radius-b-#{$radius}px, .rounded-b-#{$radius}px
+    border-bottom-left-radius: #{$radius}px !important
+    border-bottom-right-radius: #{$radius}px !important
+
+  .border-radius-b-#{$radius}px-m, .rounded-b-#{$radius}px-m
+    @include mobile
+      border-bottom-left-radius: #{$radius}px !important
+      border-bottom-right-radius: #{$radius}px !important
+
+  .border-radius-b-#{$radius}px-t, .rounded-b-#{$radius}px-t
+    @include tablet
+      border-bottom-left-radius: #{$radius}px !important
+      border-bottom-right-radius: #{$radius}px !important
+
+  // Left corners only
+  .border-radius-l-#{$radius}px, .rounded-l-#{$radius}px
+    border-top-left-radius: #{$radius}px !important
+    border-bottom-left-radius: #{$radius}px !important
+
+  .border-radius-l-#{$radius}px-m, .rounded-l-#{$radius}px-m
+    @include mobile
+      border-top-left-radius: #{$radius}px !important
+      border-bottom-left-radius: #{$radius}px !important
+
+  .border-radius-l-#{$radius}px-t, .rounded-l-#{$radius}px-t
+    @include tablet
+      border-top-left-radius: #{$radius}px !important
+      border-bottom-left-radius: #{$radius}px !important
+
+  // Right corners only
+  .border-radius-r-#{$radius}px, .rounded-r-#{$radius}px
+    border-top-right-radius: #{$radius}px !important
+    border-bottom-right-radius: #{$radius}px !important
+
+  .border-radius-r-#{$radius}px-m, .rounded-r-#{$radius}px-m
+    @include mobile
+      border-top-right-radius: #{$radius}px !important
+      border-bottom-right-radius: #{$radius}px !important
+
+  .border-radius-r-#{$radius}px-t, .rounded-r-#{$radius}px-t
+    @include tablet
+      border-top-right-radius: #{$radius}px !important
+      border-bottom-right-radius: #{$radius}px !important
 
 
 // -----------------------------------------------------------------------------
@@ -67,7 +136,42 @@
 
 
 // -----------------------------------------------------------------------------
-// Border styles
+// Applied borders (themed)
+// -----------------------------------------------------------------------------
+// Add a 1px solid border using the `--border` CSS custom property. The
+// consuming project is expected to declare `--border` somewhere in its theme
+// (light / dark / etc.).
+//
+//   - `.border`              border on every side.
+//   - `.border-{suffix}`     border on one side (`t` top, `b` bottom, `l`
+//                            left, `r` right, `s` inline-start, `e` inline-end).
+//
+// Naming note: `.border` purposely does NOT ship a `.border-t` tablet variant
+// because that name is already taken by the top-side helper. Use `.border-m`
+// for mobile or compose per-side `.border-{suffix}-t` for tablet.
+
+.border
+  border: 1px solid var(--border) !important
+
+.border-m
+  @include mobile
+    border: 1px solid var(--border) !important
+
+@each $dir, $suffix in $directions
+  .border-#{$suffix}
+    border-#{$dir}: 1px solid var(--border) !important
+
+  .border-#{$suffix}-m
+    @include mobile
+      border-#{$dir}: 1px solid var(--border) !important
+
+  .border-#{$suffix}-t
+    @include tablet
+      border-#{$dir}: 1px solid var(--border) !important
+
+
+// -----------------------------------------------------------------------------
+// Border styles (clearing borders)
 // -----------------------------------------------------------------------------
 
 .border-none

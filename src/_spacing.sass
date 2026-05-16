@@ -158,6 +158,7 @@ $em-values: (1, 1.5, 2)
 @each $val in $rem-values
   @include generate-spacing("padding", $val, "rem")
   @include generate-spacing("margin", $val, "rem")
+  @include generate-spacing("gap", $val, "rem")
 
 @each $val in $px-values
   @include generate-spacing("padding", $val, "px")
@@ -167,6 +168,14 @@ $em-values: (1, 1.5, 2)
 @each $val in $em-values
   @include generate-spacing("padding", $val, "em")
   @include generate-spacing("margin", $val, "em")
+  @include generate-spacing("gap", $val, "em")
+
+$viewport-spacing: (5, 10, 15, 20, 25, 30, 40, 50)
+@each $val in $viewport-spacing
+  @include generate-spacing("padding", $val, "vh")
+  @include generate-spacing("margin", $val, "vh")
+  @include generate-spacing("padding", $val, "vw")
+  @include generate-spacing("margin", $val, "vw")
 
 
 // -----------------------------------------------------------------------------

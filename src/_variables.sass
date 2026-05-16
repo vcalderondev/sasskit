@@ -61,12 +61,38 @@ $flex-directions: (row, row-reverse, column, column-reverse)
 // (`.w-50-m`, `.h-75-t`, ...).
 
 $sizes: (0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100)
-$opacities: (0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100)
+
+
+// -----------------------------------------------------------------------------
+// Opacity scale
+// -----------------------------------------------------------------------------
+// Drives `.opacity-N` classes. Includes fine-grained low values (2, 4, 15, 85)
+// for subtle disabled / overlay states in addition to the common 5%–100% steps.
+
+$opacities: (0, 2, 4, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 85, 90, 100)
+
 
 // -----------------------------------------------------------------------------
 // Border Radius & Overflow
 // -----------------------------------------------------------------------------
 
+// Overflow keywords used by the `.overflow-*` / `.overflow-x-*` / `.overflow-y-*`
+// generator in `_display.sass`.
 $overflows: (auto, hidden, scroll, visible)
-$border-radius-px: (0, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40)
+
+// Pixel radius scale. Granular at the small end (1, 2, 4, 6, 8, 10, 11, 12),
+// then jumps for larger card / hero corners.
+$border-radius-px: (0, 1, 2, 4, 6, 8, 10, 11, 12, 14, 16, 20, 24, 28, 30, 32, 40)
+
+// Named theme radii. Consumers reference them as `.rounded-md`, `.rounded-full`,
+// etc. `full` is a "pill" radius that rounds any box into a capsule.
 $border-radius-named: ("xs": 2px, "sm": 4px, "md": 8px, "lg": 12px, "xl": 16px, "2xl": 24px, "full": 9999px)
+
+
+// -----------------------------------------------------------------------------
+// Cursor keywords
+// -----------------------------------------------------------------------------
+// Drives `.cursor-*` utility classes. Includes the most common interactive
+// states plus drag / zoom helpers for canvas-like UIs.
+
+$cursors: (pointer, default, move, not-allowed, help, wait, text, grab, grabbing, zoom-in, zoom-out)

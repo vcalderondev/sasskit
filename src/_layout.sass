@@ -21,7 +21,7 @@
 // `.translate-y-center` to perform absolute centering.
 
 .top-0
-  top: 0
+  top: 0 !important
 
 .top-0-m
   @include mobile
@@ -43,7 +43,7 @@
     top: 50% !important
 
 .bottom-0
-  bottom: 0
+  bottom: 0 !important
 
 .bottom-0-m
   @include mobile
@@ -54,7 +54,7 @@
     bottom: 0 !important
 
 .left-0
-  left: 0
+  left: 0 !important
 
 .left-0-m
   @include mobile
@@ -76,7 +76,7 @@
     left: 50% !important
 
 .right-0
-  right: 0
+  right: 0 !important
 
 .right-0-m
   @include mobile
@@ -134,6 +134,10 @@ $right-px-values: (4, 6, 8, 12)
 // `.position-absolute` and the `*-50-percent` offsets above to center
 // children around a coordinate.
 
+// `.translate-x-center` / `.translate-y-center` are the canonical names.
+// `.translate-x-neg-50` / `.translate-y-neg-50` are explicit aliases that
+// document the underlying value (-50%) for consumers who prefer that style.
+
 .translate-x-center
   transform: translateX(-50%)
 
@@ -145,6 +149,17 @@ $right-px-values: (4, 6, 8, 12)
   @include tablet
     transform: translateX(-50%) !important
 
+.translate-x-neg-50
+  transform: translateX(-50%) !important
+
+.translate-x-neg-50-m
+  @include mobile
+    transform: translateX(-50%) !important
+
+.translate-x-neg-50-t
+  @include tablet
+    transform: translateX(-50%) !important
+
 .translate-y-center
   transform: translateY(-50%)
 
@@ -153,6 +168,17 @@ $right-px-values: (4, 6, 8, 12)
     transform: translateY(-50%) !important
 
 .translate-y-center-t
+  @include tablet
+    transform: translateY(-50%) !important
+
+.translate-y-neg-50
+  transform: translateY(-50%) !important
+
+.translate-y-neg-50-m
+  @include mobile
+    transform: translateY(-50%) !important
+
+.translate-y-neg-50-t
   @include tablet
     transform: translateY(-50%) !important
 

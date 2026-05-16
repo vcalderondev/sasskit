@@ -16,7 +16,7 @@ Import the entry point from your main SASS file:
 @use "@vcalderondev/sasskit" as rules
 ```
 
-That single import re-exports every module (`variables`, `mixins`, `base`, `layout`, `display`, `spacing`, `typography`, `keyframes`, `borders`).
+That single import re-exports every module (`variables`, `mixins`, `base`, `layout`, `display`, `spacing`, `typography`, `keyframes`, `borders`, `grid`).
 
 ## Features
 
@@ -38,9 +38,22 @@ Almost every utility class ships in three variants:
 
 Breakpoints live in `_variables.sass` (`$mobile`, `$tablet`, `$desktop`) and can be overridden by re-declaring them before importing the package.
 
-## Base reset
+## Base reset & stateless helpers (`_base.sass`)
 
 A light CSS reset is applied automatically: universal `box-sizing: border-box`, zero margin/padding on `html`/`body`, font smoothing on macOS, list-style removed, anchors inherit color, native button chrome cleared, responsive `img`/`video`.
+
+### Background resets
+
+| Class             | Effect                  |
+| ----------------- | ----------------------- |
+| `.bg-transparent` | `background: transparent` |
+| `.bg-none`        | `background: none`      |
+
+Both ship with `-m` / `-t` responsive variants.
+
+### Cursor utilities
+
+`.cursor-{value}` for every keyword in `$cursors`: `pointer, default, move, not-allowed, help, wait, text, grab, grabbing, zoom-in, zoom-out`. All with `-m` / `-t`.
 
 ## Display
 
@@ -155,7 +168,14 @@ The rem scale also exposes legacy aliases without the unit suffix: `.fs-1`, `.fs
 
 ### Letter-spacing
 
-`.letter-spacing-1px` ... `.letter-spacing-10px`, plus em-based values: `.letter-spacing-0-01-em`, `.letter-spacing-0-02-em`, `.letter-spacing-0-05-em`, `.letter-spacing-0-1-em`. All with `-m` / `-t`.
+Positive and negative scales, both in `px` and `em`. Negative variants are prefixed with `neg-` (selectors can't start with `-`).
+
+- **px (positive):** `.letter-spacing-1px` ... `.letter-spacing-10px`.
+- **px (negative):** `.letter-spacing-neg-1px` ... `.letter-spacing-neg-10px`.
+- **em (positive):** `.letter-spacing-0-01-em`, `0-02-em`, `0-05-em`, `0-1-em`, `0-15-em`, `0-2-em`.
+- **em (negative):** `.letter-spacing-neg-0-01-em`, ..., `.letter-spacing-neg-0-2-em`.
+
+All with `-m` / `-t` variants.
 
 ## Sizing (width / height)
 
@@ -197,13 +217,13 @@ Pixel offsets (driven by `$right-px-values` and `$bottom-px-values`):
 
 ### Transforms
 
-| Class                 | Effect                                 |
-| --------------------- | -------------------------------------- |
-| `.translate-x-center` | `translateX(-50%)`                     |
-| `.translate-y-center` | `translateY(-50%)`                     |
-| `.translate-center`   | `translate(-50%, -50%)` (XY centering) |
-| `.transform-none`     | Clears any existing `transform`        |
-| `.rotate-90`          | `rotate(90deg)`                        |
+| Class                                       | Effect                                 |
+| ------------------------------------------- | -------------------------------------- |
+| `.translate-x-center` / `.translate-x-neg-50` | `translateX(-50%)` (canonical + alias) |
+| `.translate-y-center` / `.translate-y-neg-50` | `translateY(-50%)` (canonical + alias) |
+| `.translate-center`                         | `translate(-50%, -50%)` (XY centering) |
+| `.transform-none`                           | Clears any existing `transform`        |
+| `.rotate-90`                                | `rotate(90deg)`                        |
 
 Typical pattern for centered absolute elements:
 
@@ -248,7 +268,7 @@ All layout utilities have `-m` / `-t` responsive variants.
 
 ## Opacity
 
-`.opacity-{n}` where `n` ∈ `0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100` — emits `opacity: n / 100`. With `-m` / `-t`.
+`.opacity-{n}` where `n` ∈ `0, 2, 4, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 85, 90, 100` — emits `opacity: n / 100`. Includes fine-grained low values (`2`, `4`, `15`, `85`) for subtle disabled or overlay states. With `-m` / `-t`.
 
 ## Z-index
 
@@ -262,7 +282,20 @@ Three tiers, all with `-m` / `-t` variants:
 
 ### Border radius (px)
 
-`.border-radius-{n}px` and the alias `.rounded-{n}px` for `n` ∈ `0, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40`.
+Full radius:
+
+- `.border-radius-{n}px` and the alias `.rounded-{n}px` for `n` ∈ `0, 1, 2, 4, 6, 8, 10, 11, 12, 14, 16, 20, 24, 28, 30, 32, 40`.
+
+Directional radii (round only one side of the box):
+
+| Class                                         | Affects                                            |
+| --------------------------------------------- | -------------------------------------------------- |
+| `.border-radius-t-{n}px` / `.rounded-t-{n}px` | top-left + top-right                               |
+| `.border-radius-b-{n}px` / `.rounded-b-{n}px` | bottom-left + bottom-right                         |
+| `.border-radius-l-{n}px` / `.rounded-l-{n}px` | top-left + bottom-left                             |
+| `.border-radius-r-{n}px` / `.rounded-r-{n}px` | top-right + bottom-right                           |
+
+All radii — full and directional — ship with `-m` / `-t` responsive variants.
 
 ### Border radius (named)
 
@@ -279,11 +312,70 @@ Three tiers, all with `-m` / `-t` variants:
 
 (`.border-radius-{name}` is the equivalent long form.)
 
-### Border styles
+### Applied borders (themed)
+
+`.border` and the per-side helpers `.border-t`, `.border-b`, `.border-l`, `.border-r`, `.border-s`, `.border-e` apply a `1px solid var(--border)` border. The consuming project must declare `--border` in its theme (light / dark / etc.).
+
+```css
+:root { --border: #e5e7eb; }
+[data-theme="dark"] { --border: #1f2937; }
+```
+
+Responsive variants:
+
+- Per-side classes have `-m` / `-t` variants (`.border-t-m`, `.border-l-t`, ...).
+- `.border` (all sides) only has the mobile variant `.border-m`. The tablet name `.border-t` is intentionally taken by the top-side helper; for tablet-only borders, compose `.border-{side}-t` per side.
+
+### Border styles (clearing)
 
 `.border-none`, `.border-transparent`, plus per-side helpers `.border-t-none`, `.border-b-none`, `.border-l-none`, `.border-r-none`, `.border-s-none`, `.border-e-none`.
 
-All border classes have `-m` / `-t` variants.
+All have `-m` / `-t` variants.
+
+## Grid (`_grid.sass`)
+
+CSS Grid helpers. All ship with `-m` / `-t` responsive variants so layouts can collapse to a single column at smaller viewports.
+
+### Columns
+
+| Class               | Effect                                                                |
+| ------------------- | --------------------------------------------------------------------- |
+| `.grid-cols-{1–12}` | `display: grid` + `grid-template-columns: repeat(N, minmax(0, 1fr))`  |
+| `.grid-col-span-{1–12}` | `grid-column: span N / span N`                                    |
+| `.grid-col-span-full`   | `grid-column: 1 / -1` (full width)                                |
+
+### Rows
+
+| Class                | Effect                                                              |
+| -------------------- | ------------------------------------------------------------------- |
+| `.grid-rows-{1–6}`   | `display: grid` + `grid-template-rows: repeat(N, minmax(0, 1fr))`   |
+| `.grid-row-span-{1–6}` | `grid-row: span N / span N`                                       |
+| `.grid-row-span-full`  | `grid-row: 1 / -1`                                                |
+
+### Auto-flow
+
+| Class                  | `grid-auto-flow` value |
+| ---------------------- | ---------------------- |
+| `.grid-flow-row`       | `row`                  |
+| `.grid-flow-col`       | `column`               |
+| `.grid-flow-dense`     | `dense`                |
+| `.grid-flow-row-dense` | `row dense`            |
+| `.grid-flow-col-dense` | `column dense`         |
+
+### Common patterns
+
+```html
+<!-- 3 columns on desktop, 1 on mobile -->
+<div class="grid-cols-3 grid-cols-1-m">
+  <div>A</div><div>B</div><div>C</div>
+</div>
+
+<!-- Hero card that spans the full grid row -->
+<div class="grid-cols-4">
+  <div class="grid-col-span-full">Hero</div>
+  <div>1</div><div>2</div><div>3</div><div>4</div>
+</div>
+```
 
 ## Animations (`_keyframes.sass`)
 
@@ -306,10 +398,11 @@ These are the lists that drive class generation — override them via `@use ... 
 | `$tablet`                 | `_variables.sass` | `992px`                                                    |
 | `$desktop`                | `_variables.sass` | `1200px`                                                   |
 | `$sizes` (w / h %)        | `_variables.sass` | `0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100`|
-| `$opacities`              | `_variables.sass` | `0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100`    |
+| `$opacities`              | `_variables.sass` | `0, 2, 4, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 85, 90, 100` |
 | `$overflows`              | `_variables.sass` | `auto, hidden, scroll, visible`                            |
-| `$border-radius-px`       | `_variables.sass` | `0, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40`            |
+| `$border-radius-px`       | `_variables.sass` | `0, 1, 2, 4, 6, 8, 10, 11, 12, 14, 16, 20, 24, 28, 30, 32, 40` |
 | `$border-radius-named`    | `_variables.sass` | `xs: 2, sm: 4, md: 8, lg: 12, xl: 16, 2xl: 24, full: 9999` |
+| `$cursors`                | `_variables.sass` | `pointer, default, move, not-allowed, help, wait, text, grab, grabbing, zoom-in, zoom-out` |
 | `$viewport-sizes` (vw/vh) | `_display.sass`   | `10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 95, 100`      |
 | `$extreme-z` (z-index)    | `_display.sass`   | `500, 1000, 2000, 5000, 9999`                              |
 | `$right-px-values`        | `_layout.sass`    | `4, 6, 8, 12`                                              |
