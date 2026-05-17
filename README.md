@@ -131,7 +131,7 @@ Prefer the explicit `-rem` / `-px` / `-em` variants in new code.
 .fs-{value}[-{unit}][-{breakpoint}]
 ```
 
-- **px scale:** `10, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64`.
+- **px scale:** `8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 32, 36, 38, 40, 42, 48, 56, 64, 86, 108`.
 - **rem scale (25 values, fine-grained):** `0.5, 0.6, 0.65, 0.7, 0.75, 0.78, 0.8, 0.85, 0.875, 0.9, 0.95, 1, 1.1, 1.2, 1.25, 1.3, 1.4, 1.5, 1.75, 1.8, 2, 2.5, 3, 4, 5`.
 - **em scale:** `1, 1.2, 1.5, 2`.
 
@@ -151,7 +151,8 @@ The rem scale also exposes legacy aliases without the unit suffix: `.fs-1`, `.fs
 
 ### Alignment / Transformation
 
-`.text-left`, `.text-center`, `.text-right`, `.text-justify` (with `-m` / `-t`).
+`.text-left`, `.text-right` (physical) and `.text-start`, `.text-end` (logical, LTR-aligned with CSS logical properties that flip dynamically in RTL contexts).
+`.text-center`, `.text-justify` (with `-m` / `-t`).
 `.text-uppercase`, `.text-lowercase`, `.text-capitalize`, `.text-none` (with `-m` / `-t`).
 
 ### Line-height
@@ -164,7 +165,9 @@ The rem scale also exposes legacy aliases without the unit suffix: `.fs-1`, `.fs
 
 ### Text overflow
 
-`.text-ellipsis` — single-line ellipsis combo (`overflow: hidden` + `text-overflow: ellipsis` + `white-space: nowrap`). Has `-m` / `-t` variants.
+- `.text-ellipsis` — single-line ellipsis combo (`overflow: hidden` + `text-overflow: ellipsis` + `white-space: nowrap`).
+- `.text-ellipsis-{2–6}` — multi-line line clamping using the `-webkit-line-clamp` pattern (clamps text to 2 up to 6 lines, hiding overflow automatically).
+- Both single-line and multi-line variants ship with `-m` / `-t` responsive variants.
 
 ### Letter-spacing
 
@@ -208,11 +211,13 @@ All have `-m` / `-t` variants.
 
 ### Offsets
 
-`.top-0`, `.bottom-0`, `.left-0`, `.right-0` and centered helpers `.top-50-percent`, `.left-50-percent`. The 50% offsets pair naturally with the transform helpers below to achieve absolute centering.
+- **Physical Offsets:** `.top-0`, `.bottom-0`, `.left-0`, `.right-0` and centered helpers `.top-50-percent`, `.left-50-percent`.
+- **Logical Offsets:** `.start-0`, `.end-0` and centered helpers `.start-50-percent` / `.start-50`, `.end-50-percent` / `.end-50` (mapping to logical offsets that are fully cross-browser compatible).
+- The 50% offsets pair naturally with the transform helpers below to achieve absolute centering.
 
 Pixel offsets (driven by `$right-px-values` and `$bottom-px-values`):
 
-- **Right:** `.right-4px`, `.right-6px`, `.right-8px`, `.right-12px`.
+- **Right/End:** `.right-4px` / `.end-4px`, `.right-6px` / `.end-6px`, `.right-8px` / `.end-8px`, `.right-12px` / `.end-12px`.
 - **Bottom:** `.bottom-16px`, `.bottom-32px`, `.bottom-40px`.
 
 ### Transforms
