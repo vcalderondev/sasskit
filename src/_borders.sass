@@ -9,6 +9,7 @@
 // rounding and borders can be adjusted per breakpoint.
 // =============================================================================
 
+@use 'sass:map'
 @use 'variables' as *
 @use 'mixins' as *
 
@@ -35,17 +36,19 @@ $radius-prefixes: ("border-radius", "rounded")
 $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l": (top-left, bottom-left), "r": (top-right, bottom-right))
 
 @each $radius in $border-radius-px
-  // Full radius: `.border-radius-Npx`, `.rounded-Npx`
+  // Full radius: `.border-radius-Npx`, `.rounded-Npx`.
   @each $prefix in $radius-prefixes
-    @include responsive("#{$prefix}-#{$radius}px")
-      border-radius: #{$radius}px !important
+    @include responsive("#{$prefix}-#{$radius}px", (border-radius: #{$radius}px))
 
-  // Directional radii: `.rounded-t-Npx`, `.rounded-b-Npx`, etc.
+  // Directional radii: `.rounded-t-Npx`, `.rounded-b-Npx`, etc. We build the
+  // multi-corner declaration map dynamically because each side touches two
+  // physical corners.
   @each $suffix, $corners in $radius-sides
+    $decls: ()
+    @each $corner in $corners
+      $decls: map.merge($decls, ("border-#{$corner}-radius": #{$radius}px))
     @each $prefix in $radius-prefixes
-      @include responsive("#{$prefix}-#{$suffix}-#{$radius}px")
-        @each $corner in $corners
-          border-#{$corner}-radius: #{$radius}px !important
+      @include responsive("#{$prefix}-#{$suffix}-#{$radius}px", $decls)
 
 
 // -----------------------------------------------------------------------------
@@ -57,8 +60,7 @@ $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l
 
 @each $name, $value in $border-radius-named
   @each $prefix in $radius-prefixes
-    @include responsive("#{$prefix}-#{$name}")
-      border-radius: $value !important
+    @include responsive("#{$prefix}-#{$name}", (border-radius: $value))
 
 
 // -----------------------------------------------------------------------------
@@ -68,8 +70,7 @@ $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l
 // single loop reusing `$radius-prefixes`.
 
 @each $prefix in $radius-prefixes
-  @include responsive("#{$prefix}-50-percent")
-    border-radius: 50% !important
+  @include responsive("#{$prefix}-50-percent", (border-radius: 50%))
 
 
 // -----------------------------------------------------------------------------
@@ -88,23 +89,14 @@ $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l
 // for mobile or compose per-side `.border-{suffix}-t` for tablet.
 
 .border
-  border: 1px solid var(--border) !important
+  border: 1px solid var(--border)
 
 .border-m
   @include mobile
     border: 1px solid var(--border) !important
 
 @each $dir, $suffix in $directions
-  .border-#{$suffix}
-    border-#{$dir}: 1px solid var(--border) !important
-
-  .border-#{$suffix}-m
-    @include mobile
-      border-#{$dir}: 1px solid var(--border) !important
-
-  .border-#{$suffix}-t
-    @include tablet
-      border-#{$dir}: 1px solid var(--border) !important
+  @include responsive("border-#{$suffix}", (border-#{$dir}: 1px solid var(--border)))
 
 
 // -----------------------------------------------------------------------------
@@ -113,11 +105,9 @@ $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l
 // `.border-none` clears the whole border shorthand; `.border-transparent`
 // keeps the box width but makes the line invisible.
 
-@include responsive("border-none")
-  border: none !important
+@include responsive("border-none", (border: none))
 
-@include responsive("border-transparent")
-  border-color: transparent !important
+@include responsive("border-transparent", (border-color: transparent))
 
 
 // -----------------------------------------------------------------------------
@@ -127,13 +117,4 @@ $radius-sides: ("t": (top-left, top-right), "b": (bottom-left, bottom-right), "l
 // removed without affecting the others.
 
 @each $dir, $suffix in $directions
-  .border-#{$suffix}-none
-    border-#{$dir}: none !important
-
-  .border-#{$suffix}-none-m
-    @include mobile
-      border-#{$dir}: none !important
-
-  .border-#{$suffix}-none-t
-    @include tablet
-      border-#{$dir}: none !important
+  @include responsive("border-#{$suffix}-none", (border-#{$dir}: none))

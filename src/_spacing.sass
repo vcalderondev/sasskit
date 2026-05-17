@@ -57,85 +57,35 @@
   @if $unit == "px"
     $unit-sep: ""
 
-  // Standard: .p-1-rem, .gap-10px
-  .#{$prefix}-#{$val-str}#{$unit-sep}#{$unit}
+  // Standard form (e.g. `.p-1-rem`, `.gap-10px`).
+  @include responsive("#{$prefix}-#{$val-str}#{$unit-sep}#{$unit}")
     #{$type}: #{$value}#{$unit} !important
 
-  .#{$prefix}-#{$val-str}#{$unit-sep}#{$unit}-m
-    @include mobile
-      #{$type}: #{$value}#{$unit} !important
-
-  .#{$prefix}-#{$val-str}#{$unit-sep}#{$unit}-t
-    @include tablet
-      #{$type}: #{$value}#{$unit} !important
-
-  // Legacy Alias: .p-1, .gap-10
-  .#{$prefix}-#{$val-str}
+  // Legacy unit-less alias (e.g. `.p-1`, `.gap-10`). Later units overwrite
+  // earlier ones because all three scales emit the same class name.
+  @include responsive("#{$prefix}-#{$val-str}")
     #{$type}: #{$value}#{$unit} !important
-
-  .#{$prefix}-#{$val-str}-m
-    @include mobile
-      #{$type}: #{$value}#{$unit} !important
-
-  .#{$prefix}-#{$val-str}-t
-    @include tablet
-      #{$type}: #{$value}#{$unit} !important
 
   @if $type != "gap"
+    // Side helpers (`.pt-1-rem`, `.mb-10px`, ...) and their legacy aliases.
     @each $side, $s-prefix in ("top": "t", "right": "e", "bottom": "b", "left": "s")
-      .#{$prefix}#{$s-prefix}-#{$val-str}#{$unit-sep}#{$unit}
+      @include responsive("#{$prefix}#{$s-prefix}-#{$val-str}#{$unit-sep}#{$unit}")
         #{$type}-#{$side}: #{$value}#{$unit} !important
 
-      .#{$prefix}#{$s-prefix}-#{$val-str}#{$unit-sep}#{$unit}-m
-        @include mobile
-          #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      .#{$prefix}#{$s-prefix}-#{$val-str}#{$unit-sep}#{$unit}-t
-        @include tablet
-          #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      // Legacy Side Alias: .pt-1
-      .#{$prefix}#{$s-prefix}-#{$val-str}
+      @include responsive("#{$prefix}#{$s-prefix}-#{$val-str}")
         #{$type}-#{$side}: #{$value}#{$unit} !important
 
-      .#{$prefix}#{$s-prefix}-#{$val-str}-m
-        @include mobile
-          #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      .#{$prefix}#{$s-prefix}-#{$val-str}-t
-        @include tablet
-          #{$type}-#{$side}: #{$value}#{$unit} !important
-
+    // Axis helpers (`.px-1-rem`, `.my-10px`, ...) and their legacy aliases.
     @each $axis, $a-prefix in (("left", "right"): "x", ("top", "bottom"): "y")
       $sides: list.nth($axis, 1), list.nth($axis, 2)
-      .#{$prefix}#{$a-prefix}-#{$val-str}#{$unit-sep}#{$unit}
+
+      @include responsive("#{$prefix}#{$a-prefix}-#{$val-str}#{$unit-sep}#{$unit}")
         @each $side in $sides
           #{$type}-#{$side}: #{$value}#{$unit} !important
 
-      .#{$prefix}#{$a-prefix}-#{$val-str}#{$unit-sep}#{$unit}-m
-        @include mobile
-          @each $side in $sides
-            #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      .#{$prefix}#{$a-prefix}-#{$val-str}#{$unit-sep}#{$unit}-t
-        @include tablet
-          @each $side in $sides
-            #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      // Legacy Axis Alias: .px-1
-      .#{$prefix}#{$a-prefix}-#{$val-str}
+      @include responsive("#{$prefix}#{$a-prefix}-#{$val-str}")
         @each $side in $sides
           #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      .#{$prefix}#{$a-prefix}-#{$val-str}-m
-        @include mobile
-          @each $side in $sides
-            #{$type}-#{$side}: #{$value}#{$unit} !important
-
-      .#{$prefix}#{$a-prefix}-#{$val-str}-t
-        @include tablet
-          @each $side in $sides
-            #{$type}-#{$side}: #{$value}#{$unit} !important
 
 // -----------------------------------------------------------------------------
 // Numeric scales -> generate classes

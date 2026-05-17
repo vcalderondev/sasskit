@@ -2,7 +2,7 @@
 // POSITIONAL & TRANSFORM UTILITIES
 // -----------------------------------------------------------------------------
 // Classes for fine-tuning the placement of elements:
-//   - Top / Left / Right / Bottom offsets
+//   - Top / Left / Right / Bottom offsets (0, 50%, px scale, rem scale)
 //   - Transform helpers for centering and rotation
 //
 // Every utility ships with `-m` (mobile) and `-t` (tablet) responsive
@@ -23,20 +23,28 @@ $sides: (top, bottom, left, right, start, end)
 // often combined with `.translate-center` / `.translate-x-center` /
 // `.translate-y-center` to perform absolute centering.
 
+// Two flavors per anchored offset:
+//   - `.top-0`, `.top-50-percent`   (long-form, value implicit in the name)
+//   - `.top-50`                     (short alias for the 50% variant; matches
+//                                    Bootstrap-style positioning helpers)
+
 $offsets: ("0": 0, "50-percent": 50%)
+$offset-aliases: ("50": 50%)
 
 @each $side in $sides
+  $prop: $side
+  @if $side == "start"
+    $prop: "left"
+  @else if $side == "end"
+    $prop: "right"
+
   @each $name, $value in $offsets
-    .#{$side}-#{$name}
-      #{$side}: $value !important
+    @include responsive("#{$side}-#{$name}")
+      #{$prop}: $value !important
 
-    .#{$side}-#{$name}-m
-      @include mobile
-        #{$side}: $value !important
-
-    .#{$side}-#{$name}-t
-      @include tablet
-        #{$side}: $value !important
+  @each $name, $value in $offset-aliases
+    @include responsive("#{$side}-#{$name}")
+      #{$prop}: $value !important
 
 
 // -----------------------------------------------------------------------------
@@ -45,32 +53,22 @@ $offsets: ("0": 0, "50-percent": 50%)
 // Comprehensive scales for precise positioning on all four edges.
 
 @each $side in $sides
+  $prop: $side
+  @if $side == "start"
+    $prop: "left"
+  @else if $side == "end"
+    $prop: "right"
+
   // Pixel-based offsets: .top-10px, .bottom-24px, ...
   @each $value in $px-values
-    .#{$side}-#{$value}px
-      #{$side}: #{$value}px !important
-
-    .#{$side}-#{$value}px-m
-      @include mobile
-        #{$side}: #{$value}px !important
-
-    .#{$side}-#{$value}px-t
-      @include tablet
-        #{$side}: #{$value}px !important
+    @include responsive("#{$side}-#{$value}px")
+      #{$prop}: #{$value}px !important
 
   // Rem-based offsets: .left-1-rem, .right-0-5-rem, ...
   @each $value in $rem-values
     $val-str: str-replace("#{$value}", ".", "-")
-    .#{$side}-#{$val-str}-rem
-      #{$side}: #{$value}rem !important
-
-    .#{$side}-#{$val-str}-rem-m
-      @include mobile
-        #{$side}: #{$value}rem !important
-
-    .#{$side}-#{$val-str}-rem-t
-      @include tablet
-        #{$side}: #{$value}rem !important
+    @include responsive("#{$side}-#{$val-str}-rem")
+      #{$prop}: #{$value}rem !important
 
 
 // -----------------------------------------------------------------------------
@@ -80,16 +78,42 @@ $offsets: ("0": 0, "50-percent": 50%)
 // `.position-absolute` and the `*-50-percent` offsets above to center
 // children around a coordinate.
 
-$transform-utils: ("translate-x-center": translateX(-50%), "translate-x-neg-50": translateX(-50%), "translate-y-center": translateY(-50%), "translate-y-neg-50": translateY(-50%), "translate-center": translate(-50%, -50%), "transform-none": none, "rotate-90": rotate(90deg))
+// `.translate-middle` is a Bootstrap-style alias of `.translate-center`.
+// Several aliases for the same effect are intentional so consumers can pick
+// the name that best matches their existing codebase.
+
+$transform-utils: ("translate-x-center": translateX(-50%), "translate-x-neg-50": translateX(-50%), "translate-y-center": translateY(-50%), "translate-y-neg-50": translateY(-50%), "translate-center": translate(-50%, -50%), "translate-middle": translate(-50%, -50%), "transform-none": none, "rotate-90": rotate(90deg))
 
 @each $name, $value in $transform-utils
-  .#{$name}
+  @include responsive($name)
     transform: $value !important
 
-  .#{$name}-m
-    @include mobile
-      transform: $value !important
 
-  .#{$name}-t
-    @include tablet
-      transform: $value !important
+// -----------------------------------------------------------------------------
+// Float helpers
+// -----------------------------------------------------------------------------
+// Both physical (`left`, `right`) and logical (`start`, `end`) variants.
+// `start` maps to `left` and `end` to `right` in LTR contexts; consumers who
+// need true logical floats can wrap them in their own RTL handling.
+
+$float-values: ("left": left, "right": right, "none": none, "start": left, "end": right)
+
+@each $name, $value in $float-values
+  @include responsive("float-#{$name}")
+    float: $value !important
+
+
+// -----------------------------------------------------------------------------
+// Vertical alignment & clear
+// -----------------------------------------------------------------------------
+// `vertical-align` only affects inline / inline-block / table-cell boxes.
+// `.clearfix` is the classic float-clearing helper.
+
+$vertical-aligns: (baseline, top, middle, bottom, sub, super, text-top, text-bottom)
+
+@each $value in $vertical-aligns
+  @include responsive("align-#{$value}")
+    vertical-align: $value !important
+
+@include responsive("clearfix")
+  clear: both !important

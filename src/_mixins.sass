@@ -32,19 +32,27 @@
 // -----------------------------------------------------------------------------
 // Breakpoint mixins
 // -----------------------------------------------------------------------------
-// Each mixin opens a `max-width` media query. They are used by every
-// responsive utility (`-m`, `-t` suffixes) generated in this library.
+// Three exclusive (non-overlapping) ranges driven by `$mobile` and `$tablet`:
+//
+//   mobile   = (max-width: $mobile)                    -> e.g. 0–576px
+//   tablet   = (min-width: $mobile+1, max-width: $tablet) -> e.g. 577–992px
+//   desktop  = (min-width: $tablet+1)                  -> e.g. 993px+
+//
+// Using exclusive ranges means a `-t` utility doesn't accidentally apply on
+// mobile sizes, which matches the mental model authors use when they write
+// `class="base -m-style -t-style"` expecting each breakpoint to be its own
+// independent layer.
 
 @mixin mobile
   @media (max-width: #{$mobile})
     @content
 
 @mixin tablet
-  @media (max-width: #{$tablet})
+  @media (min-width: #{$mobile + 1px}) and (max-width: #{$tablet})
     @content
 
 @mixin desktop
-  @media (max-width: #{$desktop})
+  @media (min-width: #{$tablet + 1px})
     @content
 
 
@@ -71,30 +79,50 @@
 
 
 // -----------------------------------------------------------------------------
-// responsive($selector)
+// responsive($selector, $declarations)
 // -----------------------------------------------------------------------------
 // DRY helper that emits a base class plus its `-m` and `-t` responsive
-// variants from a single `@content` block. Avoids the typical 3x repetition
-// (`.x { ... }`, `.x-m { @include mobile { ... } }`, `.x-t { @include tablet
-// { ... } }`).
+// variants from a single map of CSS declarations.
+//
+// IMPORTANT: the **base class is emitted WITHOUT `!important`**, while the
+// responsive variants always get `!important`. This matches the long-standing
+// utility-first convention: base utilities should be overridable by more
+// specific component styles, but `-m` / `-t` overrides at small viewports
+// must win over both the base utility AND any matching component rule of
+// equal specificity.
+//
+// `$declarations` is a Sass map of CSS property -> value. Use parentheses
+// to wrap multi-property declarations.
 //
 // Usage:
-//   @include responsive("m-auto")
-//     margin: auto !important
+//   @include responsive("m-auto", (margin: auto))
+//   @include responsive("text-ellipsis", (overflow: hidden, text-overflow: ellipsis, white-space: nowrap))
 //
 // Produces:
-//   .m-auto         { margin: auto !important; }
-//   .m-auto-m       { @media (max-width: 576px) { margin: auto !important; } }
-//   .m-auto-t       { @media (max-width: 992px) { margin: auto !important; } }
+//   .m-auto         { margin: auto; }
+//   .m-auto-t       { @media (tablet) { margin: auto !important; } }
+//   .m-auto-m       { @media (mobile) { margin: auto !important; } }
 
-@mixin responsive($selector)
+@mixin responsive($selector, $declarations: null)
   .#{$selector}
-    @content
+    @if $declarations
+      @each $prop, $val in $declarations
+        #{$prop}: $val
+    @else
+      @content
 
   .#{$selector}-m
     @include mobile
-      @content
+      @if $declarations
+        @each $prop, $val in $declarations
+          #{$prop}: $val !important
+      @else
+        @content
 
   .#{$selector}-t
     @include tablet
-      @content
+      @if $declarations
+        @each $prop, $val in $declarations
+          #{$prop}: $val !important
+      @else
+        @content

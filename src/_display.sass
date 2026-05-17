@@ -94,10 +94,27 @@ $shortcut-sizes: ("w-max-content": (width, max-content), "w-100vw": (width, 100v
 
 $fixed-size-props: ("w": width, "h": height, "max-w": max-width, "min-w": min-width, "min-h": min-height)
 
+// Properties for which we ALSO emit an alias without the `px` suffix.
+// `.w-N` and `.h-N` are intentionally excluded because they would clash
+// with the percentage-scale classes (e.g. `.w-50` is already 50%).
+$fixed-size-legacy: ("max-w": max-width, "min-w": min-width, "min-h": min-height)
+
 @mixin generate-fixed-size($i)
+  // Standard form: `.w-32px`, `.min-h-100px`, ...
   @each $prefix, $prop in $fixed-size-props
     @include responsive("#{$prefix}-#{$i}px")
       #{$prop}: #{$i}px !important
+
+  // Legacy form (no unit suffix): `.min-w-100`, `.max-w-64`, `.min-h-50`.
+  @each $prefix, $prop in $fixed-size-legacy
+    @include responsive("#{$prefix}-#{$i}")
+      #{$prop}: #{$i}px !important
+
+// Zero special case: `.min-w-0`, `.min-h-0`, `.max-w-0`. Often used to
+// reset flex children that would otherwise overflow their parent.
+@each $prefix, $prop in $fixed-size-legacy
+  @include responsive("#{$prefix}-0")
+    #{$prop}: 0 !important
 
 @for $i from 1 through 64
   @include generate-fixed-size($i)
@@ -114,24 +131,14 @@ $common-sizes: (80, 100, 120, 140, 160, 180, 200, 240, 280, 300, 320, 360, 400, 
 $cursors: (pointer, default, move, not-allowed, help, wait, text)
 
 @each $cursor in $cursors
-  .cursor-#{$cursor}
+  @include responsive("cursor-#{$cursor}")
     cursor: #{$cursor} !important
-  .cursor-#{$cursor}-m
-    @include mobile
-      cursor: #{$cursor} !important
-  .cursor-#{$cursor}-t
-    @include tablet
-      cursor: #{$cursor} !important
 
-.outline-none
+@include responsive("outline-none")
   outline: none !important
-.outline-none-m
-  @include mobile
-    outline: none !important
-.outline-none-t
-  @include tablet
-    outline: none !important
 
+// Pointer-events helpers: typically static (overlay layers, decorative
+// SVGs, etc.) so no responsive variants ship by default.
 .pointer-events-none
   pointer-events: none !important
 .pointer-events-auto
@@ -246,6 +253,20 @@ $justify-props: (justify-content, justify-items, justify-self)
 @each $dir in $flex-directions
   @include responsive("flex-direction-#{$dir}")
     flex-direction: #{$dir} !important
+
+
+// -----------------------------------------------------------------------------
+// Flex flow shorthand
+// -----------------------------------------------------------------------------
+// `flex-flow` is shorthand for `flex-direction + flex-wrap`. We emit it for
+// every direction and every wrap value individually because consumers
+// usually want to set one or the other, not both at once.
+
+$flex-flow-values: (row, row-reverse, column, column-reverse, nowrap, wrap, wrap-reverse)
+
+@each $value in $flex-flow-values
+  @include responsive("flex-flow-#{$value}")
+    flex-flow: #{$value} !important
 
 
 // -----------------------------------------------------------------------------

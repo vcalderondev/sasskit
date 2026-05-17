@@ -69,8 +69,7 @@ button
 $bg-resets: ("bg-transparent": transparent, "bg-none": none)
 
 @each $class, $value in $bg-resets
-  @include responsive($class)
-    background: $value !important
+  @include responsive($class, (background: $value))
 
 
 // -----------------------------------------------------------------------------
@@ -81,5 +80,4 @@ $bg-resets: ("bg-transparent": transparent, "bg-none": none)
 // — each with `-m` / `-t` responsive variants.
 
 @each $cursor in $cursors
-  @include responsive("cursor-#{$cursor}")
-    cursor: $cursor !important
+  @include responsive("cursor-#{$cursor}", (cursor: $cursor))

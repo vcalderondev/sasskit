@@ -24,19 +24,9 @@
 // helper (no need to add `.d-grid` separately).
 
 @for $i from 1 through 12
-  .grid-cols-#{$i}
+  @include responsive("grid-cols-#{$i}")
     display: grid !important
     grid-template-columns: repeat(#{$i}, minmax(0, 1fr)) !important
-
-  .grid-cols-#{$i}-m
-    @include mobile
-      display: grid !important
-      grid-template-columns: repeat(#{$i}, minmax(0, 1fr)) !important
-
-  .grid-cols-#{$i}-t
-    @include tablet
-      display: grid !important
-      grid-template-columns: repeat(#{$i}, minmax(0, 1fr)) !important
 
 
 // -----------------------------------------------------------------------------
@@ -47,27 +37,11 @@
 // parent declares.
 
 @for $i from 1 through 12
-  .grid-col-span-#{$i}
+  @include responsive("grid-col-span-#{$i}")
     grid-column: span #{$i} / span #{$i} !important
 
-  .grid-col-span-#{$i}-m
-    @include mobile
-      grid-column: span #{$i} / span #{$i} !important
-
-  .grid-col-span-#{$i}-t
-    @include tablet
-      grid-column: span #{$i} / span #{$i} !important
-
-.grid-col-span-full
+@include responsive("grid-col-span-full")
   grid-column: 1 / -1 !important
-
-.grid-col-span-full-m
-  @include mobile
-    grid-column: 1 / -1 !important
-
-.grid-col-span-full-t
-  @include tablet
-    grid-column: 1 / -1 !important
 
 
 // -----------------------------------------------------------------------------
@@ -76,19 +50,9 @@
 // Same shape as `.grid-cols-N` but for rows. Forces `display: grid`.
 
 @for $i from 1 through 6
-  .grid-rows-#{$i}
+  @include responsive("grid-rows-#{$i}")
     display: grid !important
     grid-template-rows: repeat(#{$i}, minmax(0, 1fr)) !important
-
-  .grid-rows-#{$i}-m
-    @include mobile
-      display: grid !important
-      grid-template-rows: repeat(#{$i}, minmax(0, 1fr)) !important
-
-  .grid-rows-#{$i}-t
-    @include tablet
-      display: grid !important
-      grid-template-rows: repeat(#{$i}, minmax(0, 1fr)) !important
 
 
 // -----------------------------------------------------------------------------
@@ -96,27 +60,11 @@
 // -----------------------------------------------------------------------------
 
 @for $i from 1 through 6
-  .grid-row-span-#{$i}
+  @include responsive("grid-row-span-#{$i}")
     grid-row: span #{$i} / span #{$i} !important
 
-  .grid-row-span-#{$i}-m
-    @include mobile
-      grid-row: span #{$i} / span #{$i} !important
-
-  .grid-row-span-#{$i}-t
-    @include tablet
-      grid-row: span #{$i} / span #{$i} !important
-
-.grid-row-span-full
+@include responsive("grid-row-span-full")
   grid-row: 1 / -1 !important
-
-.grid-row-span-full-m
-  @include mobile
-    grid-row: 1 / -1 !important
-
-.grid-row-span-full-t
-  @include tablet
-    grid-row: 1 / -1 !important
 
 
 // -----------------------------------------------------------------------------
@@ -130,13 +78,5 @@
 $grid-flow-map: ("row": row, "col": column, "dense": dense, "row-dense": row dense, "col-dense": column dense)
 
 @each $name, $value in $grid-flow-map
-  .grid-flow-#{$name}
+  @include responsive("grid-flow-#{$name}")
     grid-auto-flow: $value !important
-
-  .grid-flow-#{$name}-m
-    @include mobile
-      grid-auto-flow: $value !important
-
-  .grid-flow-#{$name}-t
-    @include tablet
-      grid-auto-flow: $value !important

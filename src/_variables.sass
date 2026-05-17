@@ -11,10 +11,14 @@
 // -----------------------------------------------------------------------------
 // Used by the `mobile`, `tablet` and `desktop` mixins (see `_mixins.sass`).
 // They are max-width based, so each one matches "this size or smaller".
+//
+// All three are marked `!default` so consumers can override them through the
+// `@use ... with ($mobile: ..., $tablet: ...)` syntax before the rest of the
+// library is forwarded.
 
-$mobile: 576px
-$tablet: 992px
-$desktop: 1200px
+$mobile: 576px !default
+$tablet: 992px !default
+$desktop: 1200px !default
 
 
 // -----------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 // Font-size scales
 // -----------------------------------------------------------------------------
 
-$fs-px-values: (10, 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64)
+$fs-px-values: (8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 32, 36, 38, 40, 42, 48, 56, 64, 86, 108)
 $fs-rem-values: (0.5, 0.6, 0.65, 0.7, 0.75, 0.78, 0.8, 0.85, 0.875, 0.9, 0.95, 1, 1.1, 1.2, 1.25, 1.3, 1.4, 1.5, 1.75, 1.8, 2, 2.5, 3, 4, 5)
 $fs-em-values: (1, 1.2, 1.5, 2)
 
@@ -44,7 +44,7 @@ $fs-em-values: (1, 1.2, 1.5, 2)
     $unit-sep: ""
 
   .fs-#{$val-str}#{$unit-sep}#{$unit}
-    font-size: #{$value}#{$unit} !important
+    font-size: #{$value}#{$unit}
 
   .fs-#{$val-str}#{$unit-sep}#{$unit}-m
     @include mobile
@@ -56,14 +56,13 @@ $fs-em-values: (1, 1.2, 1.5, 2)
 
 @mixin generate-typography-item($value)
   $val-str: str-replace("#{$value}", ".", "-")
-  
-  // Standard class: .fs-1-rem
+
+  // Standard class (`.fs-1-rem`) + legacy alias (`.fs-1`).
   .fs-#{$val-str}-rem
-    font-size: #{$value}rem !important
-  
-  // Legacy alias: .fs-1 (for backward compatibility)
+    font-size: #{$value}rem
+
   .fs-#{$val-str}
-    font-size: #{$value}rem !important
+    font-size: #{$value}rem
 
   .fs-#{$val-str}-rem-m, .fs-#{$val-str}-m
     @include mobile
@@ -107,9 +106,12 @@ $weights: ("100": 100, "200": 200, "300": 300, "400": 400, "500": 500, "600": 60
 // -----------------------------------------------------------------------------
 // Text alignment
 // -----------------------------------------------------------------------------
-// `.text-left`, `.text-center`, `.text-right`, `.text-justify` + responsive.
+// Physical (`.text-left`, `.text-right`) and logical (`.text-start`,
+// `.text-end`) variants, plus `.text-center` and `.text-justify`. In LTR
+// contexts `start` maps to `left` and `end` to `right`; the values use the
+// CSS logical-property keywords so they automatically flip in RTL.
 
-$aligns: (left, center, right, justify)
+$aligns: (left, center, right, justify, start, end)
 
 @each $align in $aligns
   @include responsive("text-#{$align}")
@@ -157,46 +159,44 @@ $white-spaces: (nowrap, normal, pre)
 // -----------------------------------------------------------------------------
 // Text overflow
 // -----------------------------------------------------------------------------
-// Standard "single-line ellipsis" combo: hide overflow + emit `…` glyph +
-// stay on one line. The three declarations always go together.
+// `.text-ellipsis` is the classic single-line ellipsis combo (hide overflow
+// + emit `…` + stay on one line). `.text-ellipsis-N` clamps to N lines via
+// the `-webkit-line-clamp` pattern (works in all modern browsers).
 
 @include responsive("text-ellipsis")
   overflow: hidden !important
   text-overflow: ellipsis !important
   white-space: nowrap !important
 
+@for $i from 2 through 6
+  @include responsive("text-ellipsis-#{$i}")
+    display: -webkit-box !important
+    -webkit-line-clamp: $i !important
+    -webkit-box-orient: vertical !important
+    overflow: hidden !important
+
 
 // -----------------------------------------------------------------------------
 // Letter spacing
 // -----------------------------------------------------------------------------
 // Positive and negative px-based letter-spacing helpers (1px ... 10px).
+// Each value also emits an alias without the `px` suffix (`.letter-spacing-1`)
+// for compatibility with shorter naming conventions.
 // Negative variants are prefixed with `neg-` because Sass / CSS class names
 // can't start with a minus sign in selectors.
 
 @for $i from 1 through 10
-  // Positive
-  .letter-spacing-#{$i}px
+  @include responsive("letter-spacing-#{$i}px")
     letter-spacing: #{$i}px !important
 
-  .letter-spacing-#{$i}px-m
-    @include mobile
-      letter-spacing: #{$i}px !important
+  @include responsive("letter-spacing-#{$i}")
+    letter-spacing: #{$i}px !important
 
-  .letter-spacing-#{$i}px-t
-    @include tablet
-      letter-spacing: #{$i}px !important
-
-  // Negative
-  .letter-spacing-neg-#{$i}px
+  @include responsive("letter-spacing-neg-#{$i}px")
     letter-spacing: -#{$i}px !important
 
-  .letter-spacing-neg-#{$i}px-m
-    @include mobile
-      letter-spacing: -#{$i}px !important
-
-  .letter-spacing-neg-#{$i}px-t
-    @include tablet
-      letter-spacing: -#{$i}px !important
+  @include responsive("letter-spacing-neg-#{$i}")
+    letter-spacing: -#{$i}px !important
 
 
 // Named em-based letter-spacings (positive + negative).
@@ -207,26 +207,8 @@ $letter-spacing-em-values: (0.01, 0.02, 0.05, 0.1, 0.15, 0.2)
 @each $val in $letter-spacing-em-values
   $val-str: str-replace("#{$val}", ".", "-")
 
-  // Positive
-  .letter-spacing-#{$val-str}-em
+  @include responsive("letter-spacing-#{$val-str}-em")
     letter-spacing: #{$val}em !important
 
-  .letter-spacing-#{$val-str}-em-m
-    @include mobile
-      letter-spacing: #{$val}em !important
-
-  .letter-spacing-#{$val-str}-em-t
-    @include tablet
-      letter-spacing: #{$val}em !important
-
-  // Negative
-  .letter-spacing-neg-#{$val-str}-em
+  @include responsive("letter-spacing-neg-#{$val-str}-em")
     letter-spacing: -#{$val}em !important
-
-  .letter-spacing-neg-#{$val-str}-em-m
-    @include mobile
-      letter-spacing: -#{$val}em !important
-
-  .letter-spacing-neg-#{$val-str}-em-t
-    @include tablet
-      letter-spacing: -#{$val}em !important
