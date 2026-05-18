@@ -7,7 +7,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "ukit-css": "./bin/ukit-css.mjs"
+    "ukit-css": "bin/ukit-css.mjs"
   },
   "exports": {
     ".": {
